@@ -3,3 +3,7 @@
   border: 1px solid black;
   display: inline-block;
 }
+
+.board .row {
+  display: flex;
+}

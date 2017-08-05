@@ -1,7 +1,13 @@
 
 .card {
+  align-items: center;
   border: 1px solid black;
-  display: inline-block;
+  display: flex;
   height: 150px;
+  justify-content: center;
   width: 150px;
+}
+
+.card img {
+  height: 60%;
 }
