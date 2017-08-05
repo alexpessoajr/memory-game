@@ -17,18 +17,70 @@ export default class Board extends Component {
 
   static SIZE = 4;
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      lastFlippedCard: null
+    };
+  }
+
   componentWillMount() {
     this.shuffle_();
   }
 
-  onCardClick(card, x, y) {
+  onCardClick(x, y) {
+    if (this.state.cardsMatrix[y][x].done) {
+      return;
+    }
+
     let cardsMatrix = [];
+    let lastFlippedCard = this.state.lastFlippedCard;
 
     for (let i = 0; i < Board.SIZE; i++) {
       cardsMatrix.push([...this.state.cardsMatrix[i]]);
     }
 
-    cardsMatrix[y][x].flipped ^= true;
+    if (lastFlippedCard === null) {
+
+      cardsMatrix[y][x].flipped = false;
+      lastFlippedCard = { x, y };
+
+    } else if (lastFlippedCard.x === x && lastFlippedCard.y === y) {
+
+      cardsMatrix[y][x].flipped = true;
+      lastFlippedCard = null;
+
+    } else if (cardsMatrix[y][x].name === cardsMatrix[lastFlippedCard.y][lastFlippedCard.x].name) {
+
+      cardsMatrix[y][x].flipped = false;
+      cardsMatrix[y][x].done = true;
+      cardsMatrix[lastFlippedCard.y][lastFlippedCard.x].done = true;
+      lastFlippedCard = null;
+
+    } else {
+
+      let lastX = lastFlippedCard.x;
+      let lastY = lastFlippedCard.y;
+
+      cardsMatrix[y][x].flipped = false;
+      lastFlippedCard = null;
+
+      setTimeout(() => this.flipCards_({ x: lastX, y: lastY }, { x, y }), 1000);
+    }
+
+    this.setState({ cardsMatrix, lastFlippedCard });
+  }
+
+  flipCards_(card1, card2) {
+    let cardsMatrix = [];
+
+    for (let i = 0; i < Board.SIZE; i++) {
+      cardsMatrix.push([...this.state.cardsMatrix[i]]);
+    }
+    
+    cardsMatrix[card1.y][card1.x].flipped = true;
+    cardsMatrix[card2.y][card2.x].flipped = true;
 
     this.setState({ cardsMatrix });
   }
@@ -63,7 +115,7 @@ export default class Board extends Component {
 
     this.setState({ cardsMatrix });
   }
-  
+
   render() {
     return (
       <div className="board">
@@ -75,7 +127,7 @@ export default class Board extends Component {
                 name={card.name} 
                 image={card.logo} 
                 flipped={card.flipped} 
-                onClick={e => this.onCardClick(card, cardIdx, rowIdx)} 
+                onClick={e => this.onCardClick(cardIdx, rowIdx)} 
               />
             )}
           </div>
