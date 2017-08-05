@@ -1,13 +1,48 @@
 
 .card {
-  align-items: center;
-  border: 1px solid black;
-  display: flex;
+  border: 1px solid #eee;
   height: 150px;
-  justify-content: center;
   width: 150px;
 }
 
-.card img {
+.card .container,
+.card .back,
+.card .front {
+  height: 100%;
+  width: 100%;
+}
+
+.card .back,
+.card .front {
+  align-items: center;
+  backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.card .front {
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.card .front img {
   height: 60%;
+}
+
+.card .back {
+  background: #f7f7f7;
+  transform: rotatey(180deg);
+}
+
+.card .container {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: 0.6s;
+}
+
+.card.flipped .container {
+  transform: rotateY(180deg);
 }

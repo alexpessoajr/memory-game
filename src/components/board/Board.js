@@ -21,44 +21,62 @@ export default class Board extends Component {
     this.shuffle_();
   }
 
+  onCardClick(card, x, y) {
+    let cardsMatrix = [];
+
+    for (let i = 0; i < Board.SIZE; i++) {
+      cardsMatrix.push([...this.state.cardsMatrix[i]]);
+    }
+
+    cardsMatrix[y][x].flipped ^= true;
+
+    this.setState({ cardsMatrix });
+  }
+
+  randomCardPos_() {
+    return {
+      x: Math.floor(Math.random() * Board.SIZE),
+      y: Math.floor(Math.random() * Board.SIZE)
+    }
+  }
+
+  swap_(m, p1, p2) {
+    [m[p1.x][p1.y], m[p2.x][p2.y]] = [m[p2.x][p2.y], m[p1.x][p1.y]];
+  }
+
   shuffle_() {
     let cardsMatrix = [];
 
     for (let i = 0, ct = 0; i < Board.SIZE; i++) {
       let row = [];
       for (let j = 0; j < Board.SIZE; j += 2) {
-        row.push(tools[ct]);
-        row.push(tools[ct]);
+        row.push({...tools[ct], flipped: true });
+        row.push({...tools[ct], flipped: true });
         ct++;
       }
       cardsMatrix.push(row);
     }
 
-    function randomCardPos() {
-      return {
-        x: Math.floor(Math.random() * Board.SIZE),
-        y: Math.floor(Math.random() * Board.SIZE)
-      }
-    }
-
-    function swap(m, p1, p2) {
-      [m[p1.x][p1.y], m[p2.x][p2.y]] = [m[p2.x][p2.y], m[p1.x][p1.y]];
-    }
-
     for (let i = 0; i < Board.SIZE * 2; i++) {
-      swap(cardsMatrix, randomCardPos(), randomCardPos());
+      this.swap_(cardsMatrix, this.randomCardPos_(), this.randomCardPos_());
     }
 
     this.setState({ cardsMatrix });
   }
-
+  
   render() {
     return (
       <div className="board">
         {this.state.cardsMatrix.map((cardsRow, rowIdx) =>
           <div className="row" key={`row-${rowIdx}`}>
             {cardsRow.map((card, cardIdx) =>
-              <Card image={card.logo} name={card.name} key={`card-${cardIdx}`} />
+              <Card 
+                key={`card-${cardIdx}`} 
+                name={card.name} 
+                image={card.logo} 
+                flipped={card.flipped} 
+                onClick={e => this.onCardClick(card, cardIdx, rowIdx)} 
+              />
             )}
           </div>
         )}
