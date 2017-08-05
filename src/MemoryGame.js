@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Board from './components/board/Board';
 
-class App extends Component {
+export default class MemoryGame extends Component {
   render() {
     return (
       <div>
@@ -10,5 +10,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;
